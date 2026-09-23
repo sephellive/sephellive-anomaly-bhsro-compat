@@ -1,0 +1,73 @@
+local xml = nil
+local progress_radiation = nil
+
+local function clamp_value(value, min_value, max_value)
+	if value < min_value then
+		return min_value
+	end
+
+	if value > max_value then
+		return max_value
+	end
+
+	return value
+end
+
+local function init_radiation_bar()
+	local hud = get_hud()
+
+	if not hud then
+		return false
+	end
+
+	local custom_static = hud:GetCustomStatic("body_health_system")
+
+	if not custom_static then
+		progress_radiation = nil
+		return false
+	end
+
+	local wnd = custom_static:wnd()
+
+	if not wnd then
+		return false
+	end
+
+	if progress_radiation then
+		return true
+	end
+
+	if not xml then
+		xml = CScriptXmlInit()
+		xml:ParseFile("sep_bhsro_radiation_hud.xml")
+	end
+
+	progress_radiation = xml:InitProgressBar("bhs_radiation", wnd)
+
+	if not progress_radiation then
+		return false
+	end
+
+	progress_radiation:Show(true)
+
+	return true
+end
+
+local function actor_on_update()
+	if not db.actor then
+		return
+	end
+
+	if not init_radiation_bar() then
+		return
+	end
+
+	local radiation = db.actor.radiation or 0
+	local value = clamp_value(radiation * 100, 0, 100)
+
+	progress_radiation:SetProgressPos(value)
+end
+
+function on_game_start()
+	RegisterScriptCallback("actor_on_update", actor_on_update)
+end

@@ -1,0 +1,15 @@
+<window>
+    <bhs_radiation
+        x="15"
+        y="122"
+        width="71"
+        height="10"
+        horz="1"
+        min="0"
+        max="100"
+    >
+        <progress stretch="1">
+            <texture>ui_hud_bhs_stamina</texture>
+        </progress>
+    </bhs_radiation>
+</window>
